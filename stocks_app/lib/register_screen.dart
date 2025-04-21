@@ -40,9 +40,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       await userDoc.set({
         'user_id': user.uid,
-        'first_name': _firstNameController.text.trim(),
-        'last_name': _lastNameController.text.trim(),
-        'user_role': _userRoleController.text.trim(),
         'email': user.email,
         'registration_datetime': FieldValue.serverTimestamp(),
       });
@@ -60,7 +57,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: AppBar(title: const Text('First-Time User'), backgroundColor: Color(0xFFFFFFFF)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -72,30 +70,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Text(_error!, style: const TextStyle(color: Colors.red)),
                 ),
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'First Name'),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Last Name'),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
-              TextFormField(
-                controller: _userRoleController,
-                decoration: const InputDecoration(labelText: 'User Role'),
-                validator: (value) => value!.isEmpty ? 'Required' : null,
-              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))), filled: true, fillColor: Color(0xFFd9d9d9)),
                 validator: (value) =>
                     value!.contains('@') ? null : 'Enter a valid email',
               ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))), filled: true, fillColor: Color(0xFFd9d9d9)),
                 obscureText: true,
                 validator: (value) =>
                     value!.length < 6 ? 'Minimum 6 characters' : null,
@@ -106,7 +91,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   : ElevatedButton(
                       onPressed: _registerUser,
                       child: const Text('Register'),
-                    ),
+                      style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFffde59)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                        ),
+                      ),
+                      ),
+                ),
             ],
           ),
         ),
