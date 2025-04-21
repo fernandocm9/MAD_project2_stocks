@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'register_screen.dart';
 
+//turquoise blue #5ce1e6
+//gray #d9d9d9
+//yellow #ffde59
+//white #ffffff
+
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -13,13 +18,15 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Login')),
+            appBar: AppBar(title: const Text('')),
             body: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Login', style: TextStyle(fontSize: 24)),
+                  const Text('StockTracker', style: TextStyle(fontSize: 32)),
+                  const SizedBox(height: 16),
+                  const Image(image: AssetImage('assets/stocksLogo.png'), height: 200),
                   const SizedBox(height: 16),
                   SignInForm(),
                   const SizedBox(height: 20),
