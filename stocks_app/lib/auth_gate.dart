@@ -18,7 +18,8 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('')),
+            backgroundColor: const Color(0xFFFFFFFF),
+            appBar: AppBar(title: const Text(''), backgroundColor: const Color(0xFFFFFFFF)),
             body: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -89,11 +90,12 @@ class _SignInFormState extends State<SignInForm> {
           Text(_error!, style: const TextStyle(color: Colors.red)),
         TextField(
           controller: _emailController,
-          decoration: const InputDecoration(labelText: 'Email'),
+          decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))), filled: true, fillColor: Color(0xFFd9d9d9)),
         ),
+        const SizedBox(height: 16),
         TextField(
           controller: _passwordController,
-          decoration: const InputDecoration(labelText: 'Password'),
+          decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))), filled: true, fillColor: Color(0xFFd9d9d9)),
           obscureText: true,
         ),
         const SizedBox(height: 16),
@@ -101,8 +103,16 @@ class _SignInFormState extends State<SignInForm> {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 onPressed: _signIn,
-                child: const Text('Sign In'),
+                child: const Text('Sign In', style: TextStyle(color: Colors.black)),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF5ce1e6)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
+                    ),
+                )
               ),
+            ),
       ],
     );
   }
