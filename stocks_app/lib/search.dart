@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -19,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   String stockSymbol = "Symbol";
   double displayPrice = 0.0;
   List<chartData> chartPrices = [];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   
   _search(String searchItem) async {
     searchItem = searchItem.trim();
@@ -39,8 +41,23 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  _watchAlert() {
-    print("Added " + stockSymbol + " to watchlist!");
+  _watchAlert() async {
+    if (stockSymbol == "Symbol") {
+      print("Please search for a stock first.");
+      return;
+    }    
+    try {
+      final user = _auth.currentUser;
+      final userDoc = FirebaseFirestore.instance.collection('watchlists');
+      await userDoc.add({
+        'symbol': stockSymbol,
+        'user_id': user!.uid,
+        'companyName': companyName,
+      });
+      print("Added " + stockSymbol + "to the watchlist!");
+    } catch (error) {
+      print("Error logging watchlist entry: $error");
+    }
   }
 
   @override
@@ -61,7 +78,13 @@ class _SearchPageState extends State<SearchPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _search(_searchController.text),
-              child: Text("Confirm"),
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll<Color>(Color(0xFFffde59)),
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              child: Text("Confirm", style: TextStyle(color: Colors.black)),
             ),
             SizedBox(height: 30),
             Row(
@@ -92,16 +115,16 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ],
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
             Text(
               companyName, 
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 5),
             if (chartPrices.isNotEmpty)
               Container(
-                height: 350,
-                width: 350,
+                height: 400,
+                width: 400,
                 padding: EdgeInsets.all(16),
                 child: LineChart(
                   LineChartData(
@@ -117,13 +140,13 @@ class _SearchPageState extends State<SearchPage> {
                         dotData: FlDotData(show: false),
                       ),
                     ],
-                    minY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr < next ? curr : next) - 1,
-                    maxY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr > next ? curr : next) + 1,
+                    minY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr < next ? curr : next) - 4,
+                    maxY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr > next ? curr : next) + 4,
                     titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          interval: 5,
+                          interval: 6,
                           getTitlesWidget: (value, _) {
                             int index = value.toInt();
                             if (index >= 0 && index < chartPrices.length) {
@@ -135,10 +158,11 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
+                          interval: 6,
                           showTitles: true,
-                          reservedSize: 40,
+                          reservedSize: 50,
                           getTitlesWidget: (value, _) => Text(
-                            value.toStringAsFixed(0),
+                            value.toString(),
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
@@ -155,14 +179,16 @@ class _SearchPageState extends State<SearchPage> {
               SizedBox(
                 height: 350, 
                 width: 350, 
-                child: Text("No data searched yet.")
-              )
+                child: Center(child: Text("No data searched yet."))
+              ),
+            SizedBox(height: 50),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _watchAlert(),
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.grey, 
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
