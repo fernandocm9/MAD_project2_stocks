@@ -51,7 +51,7 @@ class StockProfile {
 Future<List<ChartData>> fetchChartData(String symbol) async {
   const String AV_KEY = 'Y5M68XBXFU2HZ9H6';
   final today = DateTime.now();
-  final endDate = today.subtract(const Duration(days: 30)); // Past month
+  final endDate = today.subtract(const Duration(days: 30)); 
 
   final timeSeries = await http.get(
     Uri.parse('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=$symbol&outputsize=compact&apikey=$AV_KEY'),
