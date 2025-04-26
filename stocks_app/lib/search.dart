@@ -4,6 +4,7 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_gate.dart';
 import 'stocks_api.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,8 +17,9 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   String companyName = "";
   String stockSymbol = "Symbol";
-  double currentPrice = 0.0;
-
+  double displayPrice = 0.0;
+  List<chartData> chartPrices = [];
+  
   _search(String searchItem) async {
     searchItem = searchItem.trim();
     if (searchItem.isEmpty) {
@@ -26,17 +28,14 @@ class _SearchPageState extends State<SearchPage> {
     }
     try {
       StockResponse result = await Stocks_Api.fetchStockInformation(searchItem);
-      /*if (result.isEmpty || result == null) {
-        print("This stock symbol could not be found.");
-        return;
-      }*/
       setState(() {
         stockSymbol = result.stockSymbol;
         companyName = result.stockName; 
-        currentPrice = result.currentPrice;
+        displayPrice = result.currentPrice;
+        chartPrices = result.chartInfo;
       });
     } catch (error) {
-      print("Error fetching stock data: $error");
+      print("_search() error: $error");
     }
   }
 
@@ -62,7 +61,7 @@ class _SearchPageState extends State<SearchPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _search(_searchController.text),
-              child: Text("Confirm")
+              child: Text("Confirm"),
             ),
             SizedBox(height: 30),
             Row(
@@ -86,7 +85,7 @@ class _SearchPageState extends State<SearchPage> {
                   width: 140.0,
                   child: Center(
                     child: Text(
-                      '$currentPrice',
+                      '$displayPrice',
                       style: TextStyle(color: Colors.white, fontSize: 25),
                     ),
                   ),
@@ -99,11 +98,65 @@ class _SearchPageState extends State<SearchPage> {
               style: TextStyle(fontSize: 30),
             ),
             SizedBox(height: 15),
-            Container(
-              height: 300,
-              width: 300,
-              color: Colors.blue,
-            ),
+            if (chartPrices.isNotEmpty)
+              Container(
+                height: 350,
+                width: 350,
+                padding: EdgeInsets.all(16),
+                child: LineChart(
+                  LineChartData(
+                    lineBarsData: [
+                      LineChartBarData(
+                        isCurved: true,
+                        spots: chartPrices.map((point) {
+                          int xIndex = chartPrices.toList().indexOf(point);
+                          return FlSpot(xIndex.toDouble(), point.currentPrice);
+                        }).toList(),
+                        barWidth: 2, //line weight
+                        belowBarData: BarAreaData(show: false),
+                        dotData: FlDotData(show: false),
+                      ),
+                    ],
+                    minY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr < next ? curr : next) - 1,
+                    maxY: chartPrices.map((data) => data.currentPrice).reduce((curr, next) => curr > next ? curr : next) + 1,
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          interval: 5,
+                          getTitlesWidget: (value, _) {
+                            int index = value.toInt();
+                            if (index >= 0 && index < chartPrices.length) {
+                              return Text(chartPrices.toList()[index].date);
+                            }
+                            return Text('');
+                          },
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 40,
+                          getTitlesWidget: (value, _) => Text(
+                            value.toStringAsFixed(0),
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    ),
+                    borderData: FlBorderData(show: true),
+                    gridData: FlGridData(show: true),
+                  ),
+                ),
+              )
+            else
+              SizedBox(
+                height: 350, 
+                width: 350, 
+                child: Text("No data searched yet.")
+              )
           ],
         ),
       ),
