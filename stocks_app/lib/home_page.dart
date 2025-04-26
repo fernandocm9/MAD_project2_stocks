@@ -39,7 +39,13 @@ class _HomePageState extends State<HomePage> {
               onPressed: _signOut,
             ),
           ],
+          backgroundColor: const Color(0xFF5ce1e6), 
           bottom: const TabBar(
+            labelColor: Colors.black,
+            labelStyle: TextStyle(fontSize: 20),
+            unselectedLabelColor: Colors.black,
+            unselectedLabelStyle: TextStyle(fontSize: 15),
+            indicatorColor: Colors.yellow,
             tabs: [
               Tab(text: "Search"),
               Tab(text: "Watchlist"),
