@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
         'user_id': user!.uid,
         'companyName': companyName,
       });
-      print("Added " + stockSymbol + "to the watchlist!");
+      print("Added " + stockSymbol + " to the watchlist!");
     } catch (error) {
       print("Error logging watchlist entry: $error");
     }
