@@ -51,7 +51,7 @@ class StockProfile {
 Future<List<ChartData>> fetchChartData(String symbol) async {
   const String AV_KEY = 'Y5M68XBXFU2HZ9H6';
   final today = DateTime.now();
-  final endDate = today.subtract(const Duration(days: 30)); // Past month
+  final endDate = today.subtract(const Duration(days: 30)); 
 
   final timeSeries = await http.get(
     Uri.parse('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=$symbol&outputsize=compact&apikey=$AV_KEY'),
@@ -164,11 +164,17 @@ class _WatchlistPageState extends State<WatchlistPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            Container(
+              width: double.infinity,
+              color: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Text(
                 entry.key,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
             ...entry.value.map((profile) => Padding(
