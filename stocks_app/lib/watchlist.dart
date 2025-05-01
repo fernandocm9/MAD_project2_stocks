@@ -164,11 +164,17 @@ class _WatchlistPageState extends State<WatchlistPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            Container(
+              width: double.infinity,
+              color: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Text(
                 entry.key,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
             ...entry.value.map((profile) => Padding(
