@@ -86,7 +86,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               child: Text("Confirm", style: TextStyle(color: Colors.black)),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 28),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

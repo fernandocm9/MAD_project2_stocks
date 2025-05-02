@@ -17,6 +17,7 @@ class _NewsPageState extends State<NewsPage> {
   final user = FirebaseAuth.instance.currentUser;
   List<String> topics = [];
   List<NewsInfo> newsList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -43,75 +44,69 @@ class _NewsPageState extends State<NewsPage> {
     }
   }
 
-  /*Future<List<NewsInfo>>*/ getNews() async {
+  getNews() async {
     await fetchWatchList();
     if (topics.isEmpty) {
-      print("Enter watchlist items first.");
-      return [];
+      //return const Center(child: Text('No stocks in your watchlist.'));
+      newsList = [];
+      isLoading = false;
     }
+    setState(() {
+      isLoading = true;
+    });
     List<NewsInfo> results = await Stocks_Api.fetchNewsInformation(topics);
-    newsList = results;
+    setState(() {
+      newsList = results;
+    });
+    //return const Center(child: Text('Loading...'));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: newsList.length,
-        itemBuilder: (context, index) {
-          final news = newsList[index];
-          return Container(
-            margin: const EdgeInsets.all(15.0),
-            padding: const EdgeInsets.all(3.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black)
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${news.headline} [${news.author}]'),
-                Text('${news.date} ${news.description}'),
-              ],
-            ),
-          );
-        },
-      )
-    );
-  }
-}
-
-class NewsCard extends StatefulWidget {
-  const NewsCard({super.key});
-  @override
-  State<NewsCard> createState() => _NewsCardState();
-}
-
-class _NewsCardState extends State<NewsCard> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-            children: <Widget>[
-              // Title
-              SizedBox(
-                child: Text('Title')
-              ),
-              // Author + Date
-              Row(
+    if (newsList.isEmpty) {
+      if (isLoading) {
+        return const Center(child: Text('Loading... Please wait...'));
+      } else {
+        return const Center(child: Text('No stocks in your watchlist.'));
+      }
+    } else {
+      return Scaffold(
+        body: ListView.builder(
+          itemCount: newsList.length,
+          itemBuilder: (context, index) {
+            final news = newsList[index];
+            return Container(
+              margin: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(3.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("AUTHOR"),
-                  Text("04/04"),
+                  Container(
+                    padding: const EdgeInsets.all(10.0),
+                    color: Colors.black, 
+                    child: Text(
+                      '${news.headline} [${news.author}]', 
+                      style: TextStyle(
+                        color: Colors.white, fontSize: 15
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(15.0),
+                    color: const Color(0xFFd9d9d9), 
+                    child: Text(
+                      '(${news.date}) ${news.description}', 
+                      style: TextStyle(
+                        color: Colors.black, fontSize: 13
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              //Description
-              SizedBox(
-                child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ')
-              ),
-            ],
-          ), 
-        ),
-    );
+            );
+          },
+        )
+      );
+    }
   }
 }

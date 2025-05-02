@@ -56,7 +56,7 @@ class Stocks_Api {
     StockResponse currentStock;
     dynamic profileData; 
     String API_KEY = "d04j5l9r01qspgm3bhl0d04j5l9r01qspgm3bhlg";
-    String AV_KEY = "51AMZTLKTGKNY08K";
+    String AV_KEY = "L9MLQNBDJ2PSO4Q1";
     try {
       final profile = await http.get(
         Uri.parse('https://finnhub.io/api/v1/stock/profile2?symbol=$searchItem&token=$API_KEY'),
@@ -74,9 +74,9 @@ class Stocks_Api {
       );
       if (timeSeries.statusCode == 200) {
         final timeData = json.decode(timeSeries.body);
+        print(timeData);
         List<chartData> currentChartInfo = [];
         final dailyInfo = timeData['Time Series (Daily)'] as Map<String, dynamic>; // Written as [date] : [open, high, low...]
-
         for (final day in dailyInfo.entries) {
           final date = DateTime.parse(day.key);
           if (date.isBefore(endDate)) {
@@ -145,7 +145,6 @@ class Stocks_Api {
           //print(newEntry.toString());
           articles.add(newEntry);
         }
-        print('length: ${articles.length}');
         return articles;
       } else {
         throw Exception("Error pulling data with status code ${news.statusCode}");
