@@ -74,8 +74,9 @@ class Stocks_Api {
       );
       if (timeSeries.statusCode == 200) {
         final timeData = json.decode(timeSeries.body);
+        print(timeData);
         List<chartData> currentChartInfo = [];
-        final dailyInfo = timeData['Time Series (Daily)'] as Map<String, dynamic>; // Written as [date] : [open, high, low...]
+        final dailyInfo = timeData['Time Series (Daily)'] as Map<String, dynamic>;
         for (final day in dailyInfo.entries) {
           final date = DateTime.parse(day.key);
           if (date.isBefore(endDate)) {
@@ -124,6 +125,7 @@ class Stocks_Api {
 
       if (news.statusCode == 200) {
         final newsData = json.decode(news.body);
+        print(newsData);
         final newsList = newsData['articles'] as List;
 
         for (var entry in newsList) {
