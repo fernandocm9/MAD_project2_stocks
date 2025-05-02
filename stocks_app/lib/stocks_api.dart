@@ -74,7 +74,6 @@ class Stocks_Api {
       );
       if (timeSeries.statusCode == 200) {
         final timeData = json.decode(timeSeries.body);
-        print(timeData);
         List<chartData> currentChartInfo = [];
         final dailyInfo = timeData['Time Series (Daily)'] as Map<String, dynamic>; // Written as [date] : [open, high, low...]
         for (final day in dailyInfo.entries) {
@@ -105,7 +104,8 @@ class Stocks_Api {
       }
 
     } catch (error) {
-      throw Exception("Error loading stock information: $error");
+      //throw Exception("Error loading stock information: $error");
+      return null;
     }
   }
 
@@ -142,7 +142,6 @@ class Stocks_Api {
             author: currentAuthor,
             date: dayString
           );
-          //print(newEntry.toString());
           articles.add(newEntry);
         }
         return articles;

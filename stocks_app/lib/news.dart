@@ -47,9 +47,13 @@ class _NewsPageState extends State<NewsPage> {
   getNews() async {
     await fetchWatchList();
     if (topics.isEmpty) {
-      //return const Center(child: Text('No stocks in your watchlist.'));
-      newsList = [];
-      isLoading = false;
+      topics.add("stocks");
+      List<NewsInfo> results = await Stocks_Api.fetchNewsInformation(topics);
+      setState(() {
+        newsList = results;
+        isLoading = false;
+      });
+      return;
     }
     setState(() {
       isLoading = true;
@@ -57,18 +61,14 @@ class _NewsPageState extends State<NewsPage> {
     List<NewsInfo> results = await Stocks_Api.fetchNewsInformation(topics);
     setState(() {
       newsList = results;
+      isLoading = false;
     });
-    //return const Center(child: Text('Loading...'));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (newsList.isEmpty) {
-      if (isLoading) {
-        return const Center(child: Text('Loading... Please wait...'));
-      } else {
-        return const Center(child: Text('No stocks in your watchlist.'));
-      }
+    if (isLoading) {
+      return const Center(child: Text('Loading... Please wait...'));
     } else {
       return Scaffold(
         body: ListView.builder(
