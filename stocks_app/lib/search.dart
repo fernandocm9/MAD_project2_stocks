@@ -25,11 +25,43 @@ class _SearchPageState extends State<SearchPage> {
   _search(String searchItem) async {
     searchItem = searchItem.trim();
     if (searchItem.isEmpty) {
-      print("No search item entered.");
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Empty Search"),
+          content: const Text("Please enter a symbol first."),
+          actions: <Widget>[
+           TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+       ),
+      );
       return;
     }
     try {
-      StockResponse result = await Stocks_Api.fetchStockInformation(searchItem);
+      StockResponse? result = await Stocks_Api.fetchStockInformation(searchItem);
+      if (result == null) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text("Invalid Search"),
+            content: Text("No results found for $searchItem"),
+            actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
       setState(() {
         stockSymbol = result.stockSymbol;
         companyName = result.stockName; 
@@ -43,7 +75,21 @@ class _SearchPageState extends State<SearchPage> {
 
   _watchAlert() async {
     if (stockSymbol == "Symbol") {
-      print("Please search for a stock first.");
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Empty Search"),
+          content: const Text("Please enter a valid symbol first."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
       return;
     }    
     try {
@@ -54,7 +100,21 @@ class _SearchPageState extends State<SearchPage> {
         'user_id': user!.uid,
         'companyName': companyName,
       });
-      print("Added " + stockSymbol + "to the watchlist!");
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Valid Search"),
+          content: Text("Added " + stockSymbol + " to the watchlist!"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
     } catch (error) {
       print("Error logging watchlist entry: $error");
     }

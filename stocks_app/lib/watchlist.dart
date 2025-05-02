@@ -117,6 +117,7 @@ class _WatchlistPageState extends State<WatchlistPage> {
 
   Future<void> _loadWatchlist() async {
     final User? user = _auth.currentUser;
+    if (!mounted) return;
 
     if (user == null) {
       setState(() {
@@ -193,7 +194,7 @@ class _WatchlistPageState extends State<WatchlistPage> {
                               ? Image.network(profile.logoUrl, width: 40, height: 40, fit: BoxFit.cover)
                               : const Icon(Icons.business),
                           const SizedBox(width: 10),
-                          Text(profile.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text(profile.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           const Spacer(),
                           Text(profile.ticker, style: const TextStyle(fontSize: 16)),
                         ],
